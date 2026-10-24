@@ -1,0 +1,72 @@
+name: Quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:regression
+      - run: npm audit --audit-level=high
+
+  backend-and-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Generate local-only credentials
+        run: sh scripts/init.sh
+      - name: Build and start the application
+        run: docker compose up -d --build
+      - name: PHP style
+        run: docker compose exec -T api composer lint
+      - name: Create isolated test database
+        run: docker compose exec -T db createdb -U crm crm_test
+      - name: PHPUnit
+        run: docker compose exec -T -e DB_DATABASE=crm_test -e DB_URL= -e APP_ENV=testing api php artisan test
+      - name: Concurrent PostgreSQL regression
+        run: docker compose exec -T -e DB_DATABASE=crm_test -e DB_URL= -e APP_ENV=testing api php tests/concurrency.php
+      - name: Composer dependency audit
+        run: docker compose exec -T api composer audit --locked
+      - name: Real HTTP and worker acceptance scenarios
+        run: python3 scripts/smoke.py
+      - name: Diagnostics
+        if: failure()
+        run: docker compose logs --tail=80 api worker dispatcher
+      - name: Stop the ephemeral CI environment
+        if: always()
+        run: docker compose down -v
+
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+      - name: Scan Git history with redacted output
+        run: >-
+          docker run --rm --network none
+          --mount type=bind,source=${{ github.workspace }},target=/repo,readonly
+          ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+          git /repo --redact --no-banner

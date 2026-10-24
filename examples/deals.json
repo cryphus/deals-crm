@@ -1,0 +1,17 @@
+[
+  {"external_id":"demo-01","title":"Демо: курс Python","status":"NEW","amount":49000},
+  {"external_id":"demo-02","title":"Демо: курс английского","status":"IN_PROGRESS","amount":32000},
+  {"external_id":"demo-03","title":"Демо: подготовка к экзамену","status":"WON","amount":27000},
+  {"external_id":"demo-04","title":"Демо: вводный урок","status":"LOST","amount":0},
+  {"external_id":"demo-05","title":"Демо: курс аналитики","status":"NEW","amount":65000},
+  {"external_id":"demo-06","title":"Демо: разговорная практика","status":"IN_PROGRESS","amount":12500.50},
+  {"external_id":"demo-07","title":"Демо: курс математики","status":"NEW","amount":18000},
+  {"external_id":"demo-08","title":"Демо: курс дизайна","status":"WON","amount":42000},
+  {"external_id":"demo-09","title":"Демо: курс программирования","status":"IN_PROGRESS","amount":71000},
+  {"external_id":"demo-10","title":"Демо: курс немецкого","status":"LOST","amount":29000},
+  {"external_id":"demo-11","title":"Демо: курс SQL","status":"NEW","amount":19900},
+  {"external_id":"demo-12","title":"Демо: курс статистики","status":"WON","amount":36000},
+  {"external_id":"demo-13","title":"Демо: подготовка портфолио","status":"IN_PROGRESS","amount":15000},
+  {"external_id":"demo-14","title":"Демо: курс алгоритмов","status":"NEW","amount":58000},
+  {"external_id":"demo-15","title":"Демо: длинное название образовательного продукта для проверки списка и карточки сделки","status":"NEW","amount":99999.99}
+]

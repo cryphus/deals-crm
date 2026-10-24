@@ -1,0 +1,12 @@
+{
+  "event_id": "interview-demo-v21",
+  "event_time": "2026-10-15T15:30:00Z",
+  "deal": {
+    "id": "demo-01",
+    "version": 21,
+    "updated_at": "2026-10-15T15:29:50Z",
+    "title": "Демо: новая версия из webhook",
+    "status": "IN_PROGRESS",
+    "amount": 55000
+  }
+}
